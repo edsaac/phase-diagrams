@@ -1,0 +1,10 @@
+[theme]
+base="light"
+primaryColor="purple"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#FFF5EE"
+textColor="#262730"
+font="sans serif"
+
+[browser]
+gatherUsageStats = false

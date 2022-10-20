@@ -235,4 +235,4 @@ with columns[0]:
 with columns[1]:
     st.markdown("#### Phase diagram")
     st.pyplot(plot_stream_matplotlib())
-    st.plotly_chart(plot_stream_plotly(), use_container_width=True)
+    #st.plotly_chart(plot_stream_plotly(), use_container_width=True)

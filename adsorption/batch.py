@@ -7,18 +7,11 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
 ## Define the derivative system
-def kinetic_attachment(c, t, katt):
-    '''
-    dc/dt = -katt * c 
-    '''
-    dcdt =  - katt*c
-
-    return dcdt
-
 st.title("Attachment kinetics")
-#st.header("Equations")
-tab_list = st.tabs(["🔣 Governing eqs.", 
-                   "➗ Solution"])
+
+tab_list = st.tabs(["🔣 Governing eqs.",
+                    "Python function",
+                   "➗ Numerical Solution"])
 
 with tab_list[0]:
     st.latex(r'''
@@ -33,14 +26,28 @@ with tab_list[0]:
         \end{equation*}''')
 
 with tab_list[1]:
+    with st.echo():
+        def kinetic_attachment(c, t, katt):
+            """
+            dc/dt = -katt * c 
+            """
+            dcdt =  - katt*c
+
+            return dcdt
+
+    odeintcall = st.container()
+
+with tab_list[2]:
     ## Math globals
     time = np.arange(0,50,0.5)
-
     katt = st.slider(r"$k_{\rm att}$ [1/s]", 0.0, 1.0, 0.01, 0.001)
     log_scale = st.checkbox("log-scale", False)
 
     ## Calculate trayectories given initial condition
-    tray = odeint(kinetic_attachment, 1.0, time, args=(katt,))
+    
+    with odeintcall:
+        with st.echo():
+            tray = odeint(kinetic_attachment, 1.0, time, args=(katt,))
 
     fig,ax = plt.subplots()
 

@@ -130,3 +130,6 @@ dmypy.json
 
 # streamlit
 .streamlit/secrets.toml
+
+# other
+drafts/

@@ -38,7 +38,7 @@ def plot_stream_matplotlib(initial_condition, parameters):
     ax = axs[0]
     ax.plot(time, c0_t, lw=2, label="$c_0$")
     ax.plot(time, c1_t, lw=2, label="$q_0$")
-    ax.axhline(1.0, ls="dashed", c="blue", label="$c_\infty$")
+    ax.axhline(1.0, ls="dashed", c="blue", label=R"$c_\infty$")
     ax.set_ylabel(R"$c_i$ [-]")
     ax.set_xlabel(R"Time $t$ [-]")
     ax.set_ylim(bottom=-0.02)

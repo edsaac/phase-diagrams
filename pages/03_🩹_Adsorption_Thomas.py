@@ -46,7 +46,7 @@ def plot_stream_matplotlib(initial_condition, parameters):
     fig2, ax = plt.subplots(figsize=[5, 5])
     ax.plot(time, tray.T[0], lw=5, label="$c$")
     ax.plot(time, tray.T[1], lw=5, label="$q$")
-    ax.axhline(1.0, ls="dashed", c="blue", label="$c_\infty$")
+    ax.axhline(1.0, ls="dashed", c="blue", label=R"$c_\infty$")
     ax.axhline(q_max, ls="dashed", c="orange", label=R"$q_{max}$")
     ax.set_ylabel(R"Concentration $c, q$ [-]")
     ax.set_xlabel(R"Time $t$ [-]")

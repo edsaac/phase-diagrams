@@ -25,16 +25,44 @@ def adsorption_thomas(Y, t, p):
     return [dcdt, dqdt]
 
 
+def adsorption_second_order(Y, t, p):
+    c, q = Y
+    Q_v, k_att, k_det, q_max = p
+
+    site_block = 1 - q / q_max
+    dcdt = Q_v * (1 - c) - k_att * c * site_block + k_det * q * (q / q_max)
+    dqdt = k_att * c * site_block - k_det * q * (q / q_max)
+    return [dcdt, dqdt]
+
+
 def adsorption_competition(Y, t, p):
     c0, c1, q0, q1 = Y
 
-    Q_v, k_att0, k_det0, k_att1, k_det1, q_max = p
+    Q_v, cinit_0, k_att0, k_det0, cinit_1, k_att1, k_det1, q_max = p
 
     ads = (q0 + q1) / q_max
     site_block = 1 - ads
-    dc0dt = Q_v * (1.0 - c0) - k_att0 * c0 * site_block + k_det0 * q0
-    dc1dt = Q_v * (1.0 - c1) - k_att1 * c1 * site_block + k_det1 * q1
+    dc0dt = Q_v * (cinit_0 - c0) - k_att0 * c0 * site_block + k_det0 * q0
+    dc1dt = Q_v * (cinit_1 - c1) - k_att1 * c1 * site_block + k_det1 * q1
     dq0dt = k_att0 * c0 * site_block - k_det0 * q0
     dq1dt = k_att1 * c1 * site_block - k_det1 * q1
 
     return [dc0dt, dc1dt, dq0dt, dq1dt]
+
+
+def adsorption_triple_competition(Y, t, p):
+    c0, c1, c2, q0, q1, q2 = Y
+
+    Q_v, cinit_0, k_att0, k_det0, cinit_1, k_att1, k_det1, cinit_2, k_att2, k_det2, q_max = p
+
+    ads = (q0 + q1 + q2) / q_max
+    site_block = 1 - ads
+    dc0dt = Q_v * (cinit_0 - c0) - k_att0 * c0 * site_block + k_det0 * q0
+    dc1dt = Q_v * (cinit_1 - c1) - k_att1 * c1 * site_block + k_det1 * q1
+    dc2dt = Q_v * (cinit_2 - c2) - k_att2 * c2 * site_block + k_det2 * q2
+
+    dq0dt = k_att0 * c0 * site_block - k_det0 * q0
+    dq1dt = k_att1 * c1 * site_block - k_det1 * q1
+    dq2dt = k_att2 * c2 * site_block - k_det2 * q2
+
+    return [dc0dt, dc1dt, dc2dt, dq0dt, dq1dt, dq2dt]

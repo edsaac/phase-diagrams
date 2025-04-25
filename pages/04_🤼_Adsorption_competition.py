@@ -9,7 +9,7 @@ from equations import adsorption_competition
 
 def plot_stream_matplotlib(initial_condition, parameters):
     ## Math globals
-    q_max = parameters[-1]
+    Q_v, cinit_0, k_att0, k_det0, cinit_1, k_att1, k_det1, q_max = parameters
 
     ## Calculate trayectories given initial condition
     time = np.arange(0, 100, 0.1)
@@ -23,7 +23,7 @@ def plot_stream_matplotlib(initial_condition, parameters):
     ax.grid(True, ls="dashed", lw=1, c=[0.5, 0.5, 0.5, 0.5])
     ax.set_xlabel("Dissolved $c_0$ [-]")
     ax.set_ylabel("Adsorbed $q_0$ [-]")
-    ax.set(xlim=[0, 1.1], ylim=[0, parameters[-1]])
+    ax.set(xlim=[0, 1.2 * cinit_0], ylim=[0, q_max])
 
     ax = axs[1]
     ax.set_title("$c_1, q_1$")
@@ -31,13 +31,13 @@ def plot_stream_matplotlib(initial_condition, parameters):
     ax.grid(True, ls="dashed", lw=1, c=[0.5, 0.5, 0.5, 0.5])
     ax.set_xlabel("Dissolved $c_1$ [-]")
     ax.set_ylabel("Adsorbed $q_1$ [-]")
-    ax.set(xlim=[0, 1.1], ylim=[0, parameters[-1]])
+    ax.set(xlim=[0, 1.2 * cinit_1], ylim=[0, q_max])
 
     ## Breakthrough curves
     fig2, axs = plt.subplots(1, 2, figsize=[9, 5], sharex=True)
     ax = axs[0]
-    ax.plot(time, c0_t, lw=2, label="$c_0$")
-    ax.plot(time, c1_t, lw=2, label="$q_0$")
+    ax.plot(time, c0_t / cinit_0, lw=2, label="$c_0$")
+    ax.plot(time, c1_t / cinit_1, lw=2, label="$q_0$")
     ax.axhline(1.0, ls="dashed", c="blue", label=R"$c_\infty$")
     ax.set_ylabel(R"$c_i$ [-]")
     ax.set_xlabel(R"Time $t$ [-]")
@@ -99,10 +99,15 @@ def main():
 
     ## Tweakable parameters
     Q_v = Parameter("Q_v", 0.2, "1/d", "Volumetric flow rate ", R"Q/V")
+
+    cinit_0 = Parameter("c_0", 1.0, "mg/L", "Influent concentration compound 0", R"c_{\infty, 0}")
     k_att0 = Parameter("k_{att, 0}", 0.8, "1/d", "Adsorption rate compound 0", R"k_{att, 0}")
     k_det0 = Parameter("k_{det, 0}", 0.5, "1/d", "Desorption rate compound 0", R"k_{det, 0}")
+
+    cinit_1 = Parameter("c_1", 1.0, "mg/L", "Influent concentration compound 1", R"c_{\infty, 1}")
     k_att1 = Parameter("k_{att, 1}", 0.05, "1/d", "Adsorption rate compound 1", R"k_{att, 1}")
     k_det1 = Parameter("k_{det, 1}", 0.01, "1/d", "Desorption rate compound 1", R"k_{det, 1}")
+
     q_max = Parameter("q_max", 1.0, "mg(c)/mg(q)", "Adsorption capacity ", R"q_{max}")
 
     ## Interactives
@@ -116,24 +121,35 @@ def main():
 
         st.header("🎛️ Modify parameters")
         Q_v.render()
+        cinit_0.render()
         k_att0.render()
         k_det0.render()
+        cinit_1.render()
         k_att1.render()
         k_det1.render()
         q_max.render()
 
     initial_condition = {"c0": 0.0, "c1": 0.0, "q0": 0.0, "q1": 0.0}
-    ndpr = [Q_v.value, k_att0.value, k_det0.value, k_att1.value, k_det1.value, q_max.value]
+    ndpr = [
+        Q_v.value,
+        cinit_0.value,
+        k_att0.value,
+        k_det0.value,
+        cinit_1.value,
+        k_att1.value,
+        k_det1.value,
+        q_max.value,
+    ]
 
     st.divider()
 
     st.info("👈 You can tweak the system parameters in the sidebar")
 
     with st.expander("Initial condition:", expanded=True):
-        initial_condition["c0"] = st.slider("c₀", 0.0, 1.0, 0.0, 0.05, "%.2f")
-        initial_condition["c1"] = st.slider("c1", 0.0, 1.0, 0.0, 0.05, "%.2f")
-        initial_condition["q0"] = st.slider("q₀", 0.0, q_max.value, 0.0, 0.05, "%.2f")
-        initial_condition["q1"] = st.slider("q1", 0.0, q_max.value, 0.0, 0.05, "%.2f")
+        initial_condition["c0"] = st.slider("c₀(t=0)", 0.0, 1.0, 0.0, 0.05, "%.2f")
+        initial_condition["c1"] = st.slider("c1(t=0)", 0.0, 1.0, 0.0, 0.05, "%.2f")
+        initial_condition["q0"] = st.slider("q₀(t=0)", 0.0, q_max.value, 0.0, 0.05, "%.2f")
+        initial_condition["q1"] = st.slider("q1(t=0)", 0.0, q_max.value, 0.0, 0.05, "%.2f")
 
     st.markdown("#### Phase diagram")
     figs = plot_stream_matplotlib(list(initial_condition.values()), ndpr)
